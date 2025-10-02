@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSDR OSD-48 Sample Metadata Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f9;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #004d99;
+            border-bottom: 3px solid #f2f2f2;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 25px;
+            border-left: 5px solid #007bff;
+            padding-left: 10px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #e9f0f6;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #d0dbe7;
+        }
+        .card strong {
+            color: #004d99;
+            display: block;
+            margin-bottom: 5px;
+        }
+        /* Accordion for Protocols */
+        .accordion-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .accordion-header {
+            background-color: #f7f7f7;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-header:hover {
+            background-color: #eee;
+        }
+        .accordion-content {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: none; /* Hidden by default */
+            background-color: #fff;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        .publication-list li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>OSDR GeneLab Metadata Visualization: OSD-48 Study</h1>
+    <p>Data analyzed from the API endpoint for Sample: <code>Mmus_C57-6J_LVR_GC_I_Rep1_M31</code></p>
+
+    <h2>1. Sample Identification & Context</h2>
+    <div class="grid" id="sample-info">
+        </div>
+    
+    <h2>2. Experimental Design Factors</h2>
+    <div class="grid" id="study-factors">
+        </div>
+
+    <h2>3. Detailed Study Protocols</h2>
+    <div id="protocols-container">
+        </div>
+
+    <h2>4. Related Publications</h2>
+    <ul id="publication-list" class="publication-list">
+        </ul>
+</div>
+
+<script>
+    // --- STEP 1: Hardcoded Data from API Analysis (Simulates fetch result) ---
+    // NOTE: In a real application, you would use 'fetch' here to get live data.
+    const apiData = {
+        id: {
+            accession: "OSD-48",
+            assay_name: "molecular-cellular-imaging_microscopy_pannoramic scan (3d histech)",
+            sample_name: "Mmus_C57-6J_LVR_GC_I_Rep1_M31",
+            study_name: "OSD-48",
+            organism: "Mouse (Mmus_C57-6J)",
+            tissue: "Liver"
+        },
+        study_design: [
+            { type: "Primary Design", value: "Low Earth Orbit (Spaceflight)" },
+            { type: "Model System", value: "Mice, Inbred C57BL" }
+        ],
+        study_factors: [
+            { name: "Spaceflight", type: "Space Flight" },
+            { name: "Dissection Condition", type: "Dissection (Ground Control)" }
+        ],
+        protocols: [
+            {
+                name: "Animal Husbandry",
+                type: "Animal Husbandry",
+                description: "Cohort of 16-week-old female C57BL/6J mice flown to ISS, housed in Rodent Habitat and were subject to microgravity for 37 days. Sample M31 is a Ground Control mouse housed in identical hardware and conditions, but on the ground."
+            },
+            {
+                name: "Sample Collection & Preservation",
+                type: "Sample Collection",
+                description: "Ground control mice (M31, M32) followed the same on-orbit protocol: Liver was collected immediately following euthanasia (Euthasol injection followed by cervical dislocation). Ground control liver was collected immediately."
+            },
+            {
+                name: "Labeling Protocol (Microscopy)",
+                type: "Histology/Labeling",
+                description: "Paraffin-embedded samples were sectioned at 4 um and stained with hematoxylin and eosin (H and E). Whole slide imaging was performed in bright field using a Pannoramic Scan from 3D Histech. Raw files were converted to .tiff and .jpg files using QuPath."
+            }
+        ],
+        publications: [
+            { pubmed_id: 30044882, doi: "10.1371/journal.pone.0199621", title: "A microRNA signature and TGF-β1 response were identified as the key master regulators for spaceflight response.", authors: "Beheshti A, et al.", status: "Published" },
+            { pubmed_id: 32047211, doi: "10.1038/s41598-020-58898-4", title: "Validation of a New Rodent Experimental System to Investigate Consequences of Long Duration Space Habitation.", authors: "Choi SY, et al.", status: "Published" },
+            { pubmed_id: 31399081, doi: "10.1186/s40168-019-0724-4", title: "Reproducible changes in the gut microbiome suggest a shift in microbial and host metabolism during spaceflight.", authors: "Jiang P, et al.", status: "Published" }
+        ]
+    };
+
+    // --- STEP 2: Rendering Functions ---
+
+    function renderSampleInfo() {
+        const container = document.getElementById('sample-info');
+        const data = apiData.id;
+        
+        // Key Identifiers
+        const fields = [
+            { label: "Dataset Accession", value: data.accession },
+            { label: "Sample ID", value: data.sample_name },
+            { label: "Organism & Strain", value: data.organism },
+            { label: "Tissue Sampled", value: data.tissue },
+            { label: "Assay Type", value: data.assay_name }
+        ];
+
+        fields.forEach(field => {
+            container.innerHTML += `
+                <div class="card">
+                    <strong>${field.label}</strong>
+                    <span>${field.value}</span>
+                </div>
+            `;
+        });
+    }
+
+    function renderStudyFactors() {
+        const container = document.getElementById('study-factors');
+        const factors = apiData.study_factors;
+        
+        factors.forEach(factor => {
+            container.innerHTML += `
+                <div class="card">
+                    <strong>Factor Name</strong>
+                    <span>${factor.name}</span>
+                    <strong>Factor Type</strong>
+                    <span>${factor.type}</span>
+                </div>
+            `;
+        });
+    }
+
+    function renderProtocols() {
+        const container = document.getElementById('protocols-container');
+        const protocols = apiData.protocols;
+
+        protocols.forEach((protocol, index) => {
+            container.innerHTML += `
+                <div class="accordion-item">
+                    <div class="accordion-header" data-index="${index}">
+                        ${protocol.name} (${protocol.type})
+                    </div>
+                    <div class="accordion-content" id="content-${index}">
+                        <strong>Protocol Description:</strong>
+                        <p>${protocol.description}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Add event listeners for accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = document.getElementById(`content-${this.dataset.index}`);
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        });
+    }
+
+    function renderPublications() {
+        const container = document.getElementById('publication-list');
+        const publications = apiData.publications;
+
+        publications.forEach(pub => {
+            const pubLink = `https://pubmed.ncbi.nlm.nih.gov/${pub.pubmed_id}`;
+            container.innerHTML += `
+                <li>
+                    <a href="${pubLink}" target="_blank"><strong>${pub.title}</strong></a>
+                    <br>
+                    <span>Authors: ${pub.authors} | DOI: ${pub.doi} | PubMed ID: ${pub.pubmed_id}</span>
+                </li>
+            `;
+        });
+    }
+
+    // --- STEP 3: Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderSampleInfo();
+        renderStudyFactors();
+        renderProtocols();
+        renderPublications();
+    });
+
+    // NOTE: To get live data, you would replace the hardcoded 'apiData' object 
+    // with a real asynchronous fetch call to the URL provided.
+</script>
+
+</body>
+</html>
