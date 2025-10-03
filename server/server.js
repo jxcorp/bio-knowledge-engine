@@ -9,7 +9,8 @@ const PORT = 5000;
 // Config
 // Config
 const allowedOrigins = [
-  'https://jxcorp.github.io'
+  'https://jxcorp.github.io',
+  'http://localhost:5173',
  
 ];
 

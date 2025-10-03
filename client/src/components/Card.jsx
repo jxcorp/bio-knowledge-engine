@@ -14,7 +14,7 @@ const PaperCard = ({ paper }) => {
 
     return (
         // Minimalist Container: Clean white background, subtle border, gentle hover lift
-        <div className="bg-white p-5 border border-gray-200 rounded-lg transition duration-200 hover:shadow-md group">
+        <div className="bg-white p-5 border border-gray-200 rounded-lg transition duration-200 hover:shadow-md group" >
             
             {/* Title Block */}
             <a href={paper.documentLink} target="_blank" rel="noopener noreferrer" className="block focus:outline-none">

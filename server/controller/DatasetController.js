@@ -94,7 +94,7 @@ const proxyDatasetRequest = async (req, res) => {
   
   // Use req.params if the route is defined to capture the dynamic part, 
   // but sticking to your original logic for now:
-  const nasaPath = req.originalUrl.replace('/api/v1', ''); // A common fix for proxy routes
+  const nasaPath = req.originalUrl; // A common fix for proxy routes
   const externalUrl = `${OSDR_API_BASE_URL}${nasaPath}`;
   
   console.log(`[PROXY] Forwarding to: ${externalUrl}`);
