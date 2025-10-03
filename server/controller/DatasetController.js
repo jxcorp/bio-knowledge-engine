@@ -12,7 +12,6 @@ const getAllDatasets = async (req, res) => {
   const offset = parseInt(req.query.offset) || 0; 
   
   const datasetListUrl = `${OSDR_API_BASE_URL}/datasets`;
-  console.log(`[PROXY] Step 1: Fetching all dataset IDs from: ${datasetListUrl}`);
 
   try {
     
@@ -28,7 +27,6 @@ const getAllDatasets = async (req, res) => {
 
     const limitedDatasetIds = datasetIds.slice(offset, offset + limit);
 
-    console.log(`[PROXY] Step 2: Fetching metadata for ${limitedDatasetIds.length} datasets...`);
     
     const metadataPromises = limitedDatasetIds.map(async (dataset) => {
       try {
@@ -81,7 +79,6 @@ const getAllDatasets = async (req, res) => {
     res.json(finalResults);
 
   } catch (error) {
-    console.error(`Error in getAllDatasets aggregation: ${error.message}`);
     res.status(error.response?.status || 500).json({
       error: "Failed to aggregate datasets and metadata from external API.",
       details: error.message,

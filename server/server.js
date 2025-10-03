@@ -9,8 +9,9 @@ const PORT = 5000;
 // Config
 const allowedOrigins = [
   'http://localhost:5173', 
-  // The full URL including the path from the error is sometimes needed for exact matches:
-  'http://localhost:5173/bio-knowledge-engine'
+  
+  'http://localhost:5173/bio-knowledge-engine',
+  'https://jxcorp.github.io/bio-knowledge-engine'
 ];
 
 app.use(cors({
@@ -33,5 +34,5 @@ app.use("/", datasetRoutes);
 // Start server
 app.listen(PORT, () => {
   console.log(`CORS Proxy Server running at http://localhost:${PORT}`);
-  console.log(`Frontend is expected at: `);
+  
 });
