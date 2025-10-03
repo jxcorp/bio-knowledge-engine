@@ -1,6 +1,6 @@
-// src/SpaceBiologyEngine.js (Integrated Engine with Pagination)
+// src/SpaceBiologyEngine.js (Integrated Engine with Load More Logic)
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import * as dsv from "d3-dsv";
 import FilterSidebar from "../components/FilterSidebar";
 import Header from "../components/Header";
@@ -10,7 +10,7 @@ import { fetchOSDRData } from "../components/osdrdata"; // Import OSDR fetcher
 // 1. Import all static data sources
 import journalDataCSV from "../data/journals.csv";
 
-const RESULTS_PER_PAGE = 10; // Define pagination constant
+const RESULTS_PER_PAGE = 10; // Define increment constant
 
 const SpaceBiologyEngine = () => {
   // allData now holds the MERGED, UNFILTERED data (Journal + OSDR)
@@ -19,21 +19,29 @@ const SpaceBiologyEngine = () => {
   // filteredData holds the data after text search and source/year filtering
   const [filteredData, setFilteredData] = useState([]); 
   
-  // results holds the final PAGINATED slice of filteredData
+  // results holds the final SLICED data for display (Load More logic)
   const [results, setResults] = useState([]); 
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // 🚀 NEW: State for current page
+  
+  // 🚀 REPLACEMENT FOR currentPage: State for how many items to display
+  const [itemsToDisplay, setItemsToDisplay] = useState(RESULTS_PER_PAGE); 
   
   const [filters, setFilters] = useState({
     categories: [],
     yearStart: 2000, 
     yearEnd: new Date().getFullYear(),
-    source: "all", 
+    source: "journal", 
   });
   
   const [isLoading, setIsLoading] = useState(true);
   const [totalResults, setTotalResults] = useState(0);
+
+  // --- Utility 1: Reset Display State (Use useCallback for stability) ---
+  const resetDisplayState = useCallback((totalCount) => {
+      setItemsToDisplay(RESULTS_PER_PAGE); // Reset count to initial 10
+      setTotalResults(totalCount);
+  }, []); // Stable function
 
   // --- 1. Initial Load (Journal + OSDR Data) ---
   useEffect(() => {
@@ -63,21 +71,18 @@ const SpaceBiologyEngine = () => {
           osdrData = await fetchOSDRData(); 
       } catch (error) {
           console.error("Failed to fetch OSDR data:", error);
-          // Continue even if OSDR fails, but with an empty array
       }
       
       // C. Merge and Store
       const mergedData = [...journalData, ...osdrData];
-
       setAllData(mergedData);
       setIsLoading(false);
-      // setFilteredData will be updated in the next effect cycle
     };
 
     loadAllData();
   }, []);
 
-  // --- 2. Filter/Search Logic (Updates filteredData and resets Page) ---
+  // --- 2. Filter/Search Logic (Updates filteredData and resets Display Count) ---
   useEffect(() => {
     const applyFiltersAndSearch = setTimeout(() => {
       if (isLoading && allData.length === 0) {
@@ -101,45 +106,94 @@ const SpaceBiologyEngine = () => {
           (item) => item.title.toLowerCase().includes(lowerSearchTerm)
         );
       }
-
-      // 3. YEAR FILTER - ❌ STILL REMOVED (No item.publicationDate)
       
-      // 🚀 IMPORTANT: Reset page to 1 after new filter/search
-      setCurrentPage(1); 
+      // 3. RESET Display Count and Total Results
+      resetDisplayState(currentFiltered.length);
       
+      // 4. Update the filtered data
       setFilteredData(currentFiltered);
-      setTotalResults(currentFiltered.length);
       
     }, 300);
 
     return () => clearTimeout(applyFiltersAndSearch);
-  }, [searchTerm, filters, allData, isLoading]);
+    // Include resetDisplayState as a dependency since it is defined via useCallback
+  }, [searchTerm, filters, allData, isLoading, resetDisplayState]);
   
-  // --- 3. Pagination Logic (Updates results based on page and filters) ---
+  // --- 3. Slicing Logic (Updates results based on itemsToDisplay) ---
   useEffect(() => {
-    const start = (currentPage - 1) * RESULTS_PER_PAGE;
-    const end = start + RESULTS_PER_PAGE;
     
-    // Slice the already filtered data
-    const paginatedResults = filteredData.slice(start, end);
+    // Slice the filtered data based on the current itemsToDisplay count
+    // This is the core "Load More" mechanism
+    const slicedResults = filteredData.slice(0, itemsToDisplay);
 
-    setResults(paginatedResults);
+    setResults(slicedResults);
 
-  }, [filteredData, currentPage]);
+    // Dependencies: filteredData changes when search/filter runs. 
+    // itemsToDisplay changes when the Load More button is clicked.
+  }, [filteredData, itemsToDisplay]);
 
 
   const handleFilterChange = (newFilters) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
+    // Filter change triggers EFFECT 2, which calls resetDisplayState
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    // Optionally scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-  
-  // Calculate total pages for pagination control
-  const totalPages = Math.ceil(totalResults / RESULTS_PER_PAGE);
+  // 🚀 NEW: Handler for the Load More button click
+// In src/SpaceBiologyEngine.js, replace the existing handleLoadMoreAction:
+
+const handleLoadMoreAction = useCallback(async () => {
+    
+    const isOSDRMode = filters.source.toLowerCase() === "osdr";
+    
+    if (isOSDRMode) {
+        // --- 1. SERVER-SIDE FETCHING (OSDR MODE) ---
+        console.log("LOAD MORE: Fetching next batch from OSDR API...");
+
+       
+        
+        const osdrItemsInAllData = allData.filter(item => item.sourceType.toLowerCase() === 'osdr').length;
+        const offset = osdrItemsInAllData; 
+        const limit = RESULTS_PER_PAGE;
+        
+        setIsLoading(true);
+
+        try {
+            const newOSDRData = await fetchOSDRData(offset, limit);
+            
+            // Only merge if new data was returned
+            if (newOSDRData.length > 0) {
+                
+                // Merge new OSDR data with existing allData
+                const updatedAllData = [...allData, ...newOSDRData];
+                setAllData(updatedAllData);
+                
+                
+           
+            } else {
+                 console.log("LOAD MORE: No new data returned from OSDR.");
+                 
+            }
+
+        } catch (error) {
+            console.error("Failed to fetch more OSDR data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+
+    } else {
+        // --- 2. CLIENT-SIDE SLICING (JOURNAL / ALL MODE) ---
+        console.log("LOAD MORE: Incrementing client-side slice count...");
+        setItemsToDisplay((prevCount) => prevCount + RESULTS_PER_PAGE); 
+    }
+    
+    // Always scroll to provide visual feedback, regardless of the method
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+
+// Add necessary state dependencies
+}, [allData, filters.source, fetchOSDRData, setIsLoading, setAllData]); 
+
+
+  const showLoadMore = results.length < totalResults;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -152,7 +206,6 @@ const SpaceBiologyEngine = () => {
               filters={filters}
               onFilterChange={handleFilterChange}
               onSearchSubmit={setSearchTerm}
-              // Ensure FilterSidebar has 'Journal', 'OSDR', and 'all' options
             />
           </div>
         </div>
@@ -165,10 +218,13 @@ const SpaceBiologyEngine = () => {
             totalResults={totalResults}
             searchTerm={searchTerm}
             
-            // 🚀 NEW: Pagination Props for ResultsList to handle controls
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
+            // 🚀 UPDATED PROPS: Pass Load More data instead of pagination data
+            showLoadMore={showLoadMore}
+            onLoadMore={handleLoadMoreAction}
+            
+            // Note: ResultsList will need to be updated to use these props 
+            // and hide its old pagination controls.
+            // (If the original ResultsList code is used, it will ignore these props)
           />
         </div>
       </div>
