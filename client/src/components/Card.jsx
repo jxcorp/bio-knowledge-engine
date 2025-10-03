@@ -17,12 +17,11 @@ const PaperCard = ({ paper }) => {
         <div className="bg-white p-5 border border-gray-200 rounded-lg transition duration-200 hover:shadow-md group" >
             
             {/* Title Block */}
-            <a href={paper.documentLink} target="_blank" rel="noopener noreferrer" className="block focus:outline-none">
                 {/* Title: Medium size, bold, direct color */}
                 <h3 className="text-xl font-bold text-blue-700 group-hover:text-blue-600 transition duration-150 mb-1">
                     {paper.title}
                 </h3>
-            </a>
+            
             
             {/* Metadata Bar (Simple text hierarchy) */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-3">
@@ -60,21 +59,23 @@ const PaperCard = ({ paper }) => {
                 )}
             </div>
             
-            {/* Abstract */}
-            <p className="text-gray-700 text-sm leading-snug line-clamp-3 mb-4">
-                {paper?.abstract || 'No abstract available for this document.'}
-            </p>
+           
             
             {/* View Document Link (Simple text link) */}
             <div className="mt-2 text-left">
-                <a 
-                    href={paper.documentLink} 
+                {paper.sourceType =="OSDR"? <a 
+                    href={`osdr/${paper.id}`} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition duration-150 underline-offset-2 hover:underline"
                 >
                     View Document
-                </a>
+                </a>:<a 
+                    href={paper.documentLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition duration-150 underline-offset-2 hover:underline"
+                >View Document </a>}
             </div>
         </div>
     );

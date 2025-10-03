@@ -9,7 +9,6 @@ const ResultsList = ({
   totalResults,
   searchTerm,
 
-  
   showLoadMore, // True if results.length < totalResults
   onLoadMore, // The handler to increment the display count
 
@@ -89,7 +88,10 @@ const ResultsList = ({
       {results.length > 0 ? (
         <div className="space-y-4">
           {results.map((paper) => (
-            <PaperCard key={paper.id} paper={paper} />
+            // 2. Corrected the dynamic link syntax using {} and ``
+            
+              <PaperCard paper={paper} />
+            
           ))}
         </div>
       ) : (
