@@ -1,7 +1,7 @@
 // src/utils/osdrFetcher.js (New or modified file)
 import axios from "axios";
 
-const OSDR_DATASETS_BASE_ENDPOINT = "http://localhost:5000/datasets";
+const OSDR_DATASETS_BASE_ENDPOINT = "https://bio-knowledge-engine.onrender.com/datasets";
 export async function fetchOSDRData(offset = 0,limit=11) {
   try {
    
