@@ -7,9 +7,11 @@ const app = express();
 const PORT = 5000;
 
 // Config
+// Config
 const allowedOrigins = [
-  'https://jxcorp.github.io',
-  'https://jxcorp.github.io/bio-knowledge-engine/'
+  'http://localhost:5173', 
+  'https://jxcorp.github.io'
+  // Remove the two entries with paths, as they are not valid browser origins
 ];
 
 app.use(cors({
