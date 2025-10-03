@@ -8,9 +8,7 @@ const PORT = 5000;
 
 // Config
 const allowedOrigins = [
-  'http://localhost:5173', 
   'https://jxcorp.github.io',
-  'http://localhost:5173/bio-knowledge-engine',
   'https://jxcorp.github.io/bio-knowledge-engine/'
 ];
 
