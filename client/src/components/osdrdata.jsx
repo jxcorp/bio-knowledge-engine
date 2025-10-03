@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const OSDR_DATASETS_BASE_ENDPOINT = "http://localhost:5000/datasets";
-export async function fetchOSDRData(offset = 0,limit=10) {
+export async function fetchOSDRData(offset = 0,limit=11) {
   try {
    
     
