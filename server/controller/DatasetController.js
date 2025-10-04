@@ -31,11 +31,12 @@ const getAllDatasets = async (req, res) => {
     const metadataPromises = limitedDatasetIds.map(async (dataset) => {
       try {
         const metadataResponse = await axios.get(dataset.metadataUrl);
-        // Correctly access the nested 'metadata' object
+        
         const rawMetadata = metadataResponse.data[dataset.id].metadata;
         
-        
-        // 🚀 FIX: Use BRACKET notation for keys with spaces/special characters
+        // Safely access mission data
+        const mission = rawMetadata['mission'] || {};
+      
         const title = 
             rawMetadata["study publication title"] || // Use the publication title (often best)
             rawMetadata["study title"] ||             // Fallback to the general study title
@@ -46,9 +47,18 @@ const getAllDatasets = async (req, res) => {
             rawMetadata["project link"] || 
             dataset.restUrl || 
             `#${dataset.id}`;
+            
+        // --- CORRECTIONS HERE ---
+        // 1. Corrected the key to remove extra spaces
+        const authorsList = rawMetadata['study publication author list']; 
+        
+        // 2. Safely access dates (was mission['start date'], now mission['end date'])
+        const startDate = mission['start date'] || null;
+        const endDate = mission['end date'] || null;
+        // ------------------------
 
         // Extract and format public release date
-        const publicDateTimestamp = rawMetadata.study_public_release_date;
+        const publicDateTimestamp = rawMetadata['study_public_release_date'];
         const publicationDate = publicDateTimestamp 
             ? new Date(publicDateTimestamp * 1000).toISOString().split('T')[0]
             : null;
@@ -56,6 +66,10 @@ const getAllDatasets = async (req, res) => {
         return {
           id: dataset.id,
           title: title,
+        
+          authors: authorsList||[],
+          startdate: startDate,
+          enddate: endDate,
           documentLink: documentLink,
           publicationDate: publicationDate,
           sourceType: "OSDR",
@@ -68,6 +82,10 @@ const getAllDatasets = async (req, res) => {
           title: `OSDR Study: ${dataset.id} (Metadata Fetch Failed)`,
           documentLink: dataset.restUrl,
           sourceType: "OSDR",
+          authors:dataset.authors||[],
+          startdate:dataset.startdate||"",
+          enddate:dataset.enddate||"",
+          publicationDate:dataset.publicationDate||"",
         };
       }
     });

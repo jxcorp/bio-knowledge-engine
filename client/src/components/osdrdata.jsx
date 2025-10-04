@@ -16,7 +16,11 @@ export async function fetchOSDRData(offset = 0,limit=11) {
         id: studySummary.id,
         title: studySummary.title || `OSDR Study: ${studySummary.id}`,
         documentLink: studySummary.documentLink || null,
-        sourceType: "OSDR", 
+        sourceType: "OSDR",
+        authors:studySummary.authors||[],
+        startdate:studySummary.startdate||"",
+        enddate:studySummary.enddate||"",
+        publicationDate:studySummary.publicationDate||"", 
       };
     });
   } catch (error) {

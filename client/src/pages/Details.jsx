@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 // Define the theme color as a constant
 const NASA_BLUE = "#0B3D91";
@@ -15,12 +15,113 @@ const formatKey = (key) =>
     .trim()
     .replace(/_/g, " ");
 
-/* --- Helper Component: MetadataList (Clean, formal details block) --- */
+
+/* -------------------------------------------------------------------------- */
+/* HELPER COMPONENT: DetailsSidebar                */
+/* -------------------------------------------------------------------------- */
+
+const DetailsSidebar = ({ osdrId, datasetTitle, authors, description }) => (
+  // 💡 CSS Change: Sidebar container styling (Improved text base color)
+  <aside 
+    className="lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto w-full lg:w-96 p-6 space-y-8 shadow-2xl 
+               bg-white dark:bg-gray-900 dark:text-gray-100" // text-gray-100 for better readability
+  >
+    {/* --- Core Metadata Header --- */}
+    <div 
+      // 💡 CSS Change: Header border
+      className="border-b pb-4 border-gray-200 dark:border-gray-700"
+    >
+      <p
+        className="text-xs font-semibold uppercase tracking-wider mb-2"
+        style={{ color: NASA_BLUE }} // NASA_BLUE remains
+      >
+        NASA OSDR ID: {osdrId}
+      </p>
+      <h1 
+        // 💡 CSS Change: Title text color (Ensure it's prominent)
+        className="text-3xl font-extrabold leading-snug break-words 
+                   text-gray-900 dark:text-white" // white for maximum contrast
+      >
+        {datasetTitle}
+      </h1>
+      <p 
+        // 💡 CSS Change: Author text color (Better contrast)
+        className="mt-2 text-sm font-medium text-gray-600 dark:text-gray-300"
+      >
+        Authors: {Array.isArray(authors) ? authors.join(", ") : authors}
+      </p>
+    </div>
+
+    {/* --- Study Summary --- */}
+    <div>
+      <h2
+        className="text-sm font-bold uppercase mb-2"
+        style={{ color: NASA_BLUE_HOVER }} // NASA_BLUE_HOVER remains
+      >
+        Study Summary
+      </h2>
+      <p 
+        // 💡 CSS Change: Summary text color (Better contrast)
+        className="text-sm leading-relaxed text-gray-700 dark:text-gray-200"
+      >
+        {description}
+      </p>
+    </div>
+
+    {/* --- Navigation Table of Contents (TOC) --- */}
+    <div 
+      // 💡 CSS Change: TOC border
+      className="pt-4 border-t border-gray-100 dark:border-gray-800"
+    >
+      <h2 
+        // 💡 CSS Change: TOC header color (Ensure it's prominent)
+        className="text-sm font-bold uppercase mb-3 text-gray-900 dark:text-white"
+      >
+        Quick Navigation
+      </h2>
+      <nav className="space-y-2">
+        <a
+          href="#metadata"
+          // 💡 CSS Change: TOC link colors (Better contrast)
+          className="block text-sm font-medium transition duration-150 
+                     text-gray-700 hover:text-indigo-600 
+                     dark:text-gray-300 dark:hover:text-cyan-400"
+        >
+          &bull; Additional Parameters
+        </a>
+        <a
+          href="#files"
+          // 💡 CSS Change: TOC link colors (Better contrast)
+          className="block text-sm font-medium transition duration-150 
+                     text-gray-700 hover:text-indigo-600 
+                     dark:text-gray-300 dark:hover:text-cyan-400"
+        >
+          &bull; Associated Files
+        </a>
+        <Link
+          to="/"
+          // 💡 CSS Change: "Back" link colors
+          className="mt-4 inline-block text-sm font-bold hover:underline
+                     text-indigo-600 dark:text-cyan-400"
+        >
+          &larr; Back to Dashboard
+        </Link>
+      </nav>
+    </div>
+  </aside>
+);
+
+
+/* -------------------------------------------------------------------------- */
+/* HELPER COMPONENT: MetadataList                  */
+/* -------------------------------------------------------------------------- */
+
 const MetadataList = ({ metadata, excludeKeys = [] }) => {
   const data = metadata.data || metadata;
 
   if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
-    return <p className="text-gray-500">No additional metadata available.</p>;
+    // 💡 CSS Change: No metadata text color
+    return <p className="text-gray-500 dark:text-gray-300">No additional metadata available.</p>;
   }
 
   const filteredEntries = Object.entries(data).filter(
@@ -29,25 +130,39 @@ const MetadataList = ({ metadata, excludeKeys = [] }) => {
   );
 
   if (filteredEntries.length === 0) {
-    return <p className="text-gray-500">No additional metadata available.</p>;
+    // 💡 CSS Change: No metadata text color
+    return <p className="text-gray-500 dark:text-gray-300">No additional metadata available.</p>;
   }
 
   return (
-    <div className=" bg-white p-6 shadow-xl">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 border-gray-200">
+    // 💡 CSS Change: Metadata box background and border/shadow
+    <div className="p-6 shadow-xl rounded-lg bg-white dark:bg-gray-800">
+      <h3
+        id="metadata" // Anchor for sidebar TOC
+        // 💡 CSS Change: Metadata header text and border color
+        className="text-2xl font-semibold mb-4 pb-2 
+                   text-gray-800 border-b border-gray-200
+                   dark:text-white dark:border-gray-700" // White text
+      >
         Additional Study Parameters
       </h3>
-      <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
         {filteredEntries.map(([key, value]) => (
-          <div key={key} className="pb-2 border-b border-gray-100">
-            {/* ACCENT COLOR: NASA_BLUE */}
+          <div 
+            key={key} 
+            // 💡 CSS Change: Individual item border
+            className="pb-2 border-b border-gray-100 dark:border-gray-700"
+          >
             <dt
               className="text-xs font-medium uppercase tracking-wider"
-              style={{ color: NASA_BLUE }}
+              style={{ color: NASA_BLUE }} // NASA_BLUE remains
             >
               {formatKey(key)}
             </dt>
-            <dd className="mt-1 text-sm text-gray-800 font-medium">
+            <dd 
+              // 💡 CSS Change: Value text color (Better contrast)
+              className="mt-1 text-sm font-medium text-gray-800 dark:text-gray-100"
+            >
               {Array.isArray(value) ? value.join(", ") : String(value)}
             </dd>
           </div>
@@ -57,39 +172,56 @@ const MetadataList = ({ metadata, excludeKeys = [] }) => {
   );
 };
 
-/* --- Helper Component: FilesGrid (Matching new accent color) --- */
+/* -------------------------------------------------------------------------- */
+/* HELPER COMPONENT: FilesGrid                     */
+/* -------------------------------------------------------------------------- */
+
 const FilesGrid = ({ files }) => {
   if (!files || files.length === 0) {
     return (
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        <h2 
+          // 💡 CSS Change: File header text color
+          className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white"
+        >
           Associated Files
         </h2>
-        <p className="text-gray-500 italic">No files found for this dataset.</p>
+        {/* 💡 CSS Change: No files text color */}
+        <p className="text-gray-500 italic dark:text-gray-300">No files found for this dataset.</p>
       </div>
     );
   }
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+      <h2 
+        id="files" 
+        // 💡 CSS Change: File header text color
+        className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white"
+      >
         Associated Files ({files.length})
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {files.map((file, index) => (
           <div
             key={index}
-            className="bg-white border border-gray-200  p-5 shadow-lg hover:shadow-xl transition duration-300 flex flex-col justify-between"
+            // 💡 CSS Change: File card background, border, shadow, hover effect
+            className="p-5 shadow-lg hover:shadow-xl transition duration-300 flex flex-col justify-between rounded-lg 
+                       bg-white border border-gray-200 
+                       dark:bg-gray-800 dark:border-gray-700"
           >
             <div>
-              {/* ACCENT COLOR: NASA_BLUE */}
               <p
                 className="text-xs font-semibold uppercase"
-                style={{ color: NASA_BLUE }}
+                style={{ color: NASA_BLUE }} // NASA_BLUE remains
               >
                 {file.type || "FILE"}
               </p>
-              <h3 className="text-base font-medium text-gray-900 mt-1 break-words">
+              <h3 
+                // 💡 CSS Change: File name text color (Better contrast)
+                className="text-base font-medium mt-1 break-words 
+                           text-gray-900 dark:text-gray-100"
+              >
                 {file.file_name || "Unnamed File"}
               </h3>
             </div>
@@ -100,11 +232,11 @@ const FilesGrid = ({ files }) => {
                   href={file.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white border border-transparent  focus:outline-none focus:ring-2 focus:ring-offset-2 transition"
-                  // ACCENT COLOR: NASA_BLUE for background and hover
+                  className="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 transition rounded-md"
                   style={{
+                    // NASA_BLUE styles remain for the button
                     backgroundColor: NASA_BLUE,
-                    "--tw-ring-color": NASA_BLUE, // Custom property for focus ring
+                    "--tw-ring-color": NASA_BLUE,
                   }}
                   onMouseOver={(e) =>
                     (e.currentTarget.style.backgroundColor = NASA_BLUE_HOVER)
@@ -124,7 +256,7 @@ const FilesGrid = ({ files }) => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M4 16v1a3 3 0 003 3h10a3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
                   Download
@@ -138,7 +270,11 @@ const FilesGrid = ({ files }) => {
   );
 };
 
-/* --- Main Page Component --- */
+
+/* -------------------------------------------------------------------------- */
+/* MAIN PAGE COMPONENT: OSDRDetailsPage              */
+/* -------------------------------------------------------------------------- */
+
 const OSDRDetailsPage = () => {
   const { osdrId } = useParams();
 
@@ -148,7 +284,6 @@ const OSDRDetailsPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // ... (fetch logic remains unchanged)
     const fetchDatasetDetails = async () => {
       setLoading(true);
       setError(null);
@@ -202,11 +337,11 @@ const OSDRDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="text-center p-12 flex justify-center items-center h-full">
+      // 💡 CSS Change: Loading page background
+      <div className="text-center p-12 flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <img
           src="/loader.gif"
           alt="Loading content..."
-          // Adjust w- and h- values to control the size of the GIF
           className="w-20 h-20"
         />
       </div>
@@ -215,12 +350,24 @@ const OSDRDetailsPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
-        <div className="max-w-6xl mx-auto bg-white p-8  shadow-2xl">
-          <h1 className="text-3xl font-bold text-red-600 mb-4">
+      // 💡 CSS Change: Error page background and card styling
+      <div className="min-h-screen p-4 sm:p-8 bg-gray-50 dark:bg-gray-900">
+        <div 
+          className="max-w-6xl mx-auto p-8 shadow-2xl rounded-lg 
+                     bg-white dark:bg-gray-800"
+        >
+          <h1 
+            // 💡 CSS Change: Error title text color
+            className="text-3xl font-bold mb-4 text-red-600"
+          >
             Error Loading Data
           </h1>
-          <p className="text-gray-700">{error}</p>
+          <p 
+            // 💡 CSS Change: Error message text color (Better contrast)
+            className="text-gray-700 dark:text-gray-200"
+          >
+            {error}
+          </p>
         </div>
       </div>
     );
@@ -235,7 +382,7 @@ const OSDRDetailsPage = () => {
   const description =
     coreMetadata["study description"] || "No study description provided.";
 
-  // Keys to exclude from the main MetadataBlock because they are in the header
+  // Keys to exclude from the main MetadataBlock because they are in the header/sidebar
   const excludeFromBlock = [
     "study publication title",
     "study publication author list",
@@ -244,69 +391,36 @@ const OSDRDetailsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* --- 1. Prominent Header Section (Title, Authors, Description) --- */}
-        <header className="mb-10 bg-white  shadow-2xl overflow-hidden">
-          {/* Top Bar for Context - ACCENT COLOR: NASA_BLUE */}
-          <div
-            className="text-white p-4 sm:p-6 flex justify-between items-center"
-            style={{ backgroundColor: NASA_BLUE }}
-          >
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest opacity-80">
-              NASA Open Science Data Repository
-            </p>
-            <p className="text-xs font-semibold">ID: {osdrId}</p>
-          </div>
+    // 💡 CSS Change: Main page container background
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100 dark:bg-gray-900">
+      
+      {/* --- LEFT SIDEBAR (Sticky Context Panel) --- */}
+      <DetailsSidebar
+        osdrId={osdrId}
+        datasetTitle={datasetTitle}
+        authors={authors}
+        description={description}
+      />
 
-          <div className="p-6 sm:p-8">
-            {/* Title - ACCENT COLOR: NASA_BLUE for underline */}
-            <h1
-              className="text-xl sm:text-l lg:text-3xl font-extrabold text-gray-900 leading-tight border-b-4 pb-2"
-              style={{ borderColor: NASA_BLUE }}
-            >
-              {datasetTitle}
-            </h1>
-
-            {/* Authors */}
-            <div className="mt-4 pt-2">
-              <p className="text-base sm:text-lg text-gray-700 font-medium">
-                <span className="font-bold text-gray-600 mr-2">
-                  Lead Authors:
-                </span>
-                {Array.isArray(authors) ? authors.join(", ") : authors}
-              </p>
-            </div>
-
-            {/* Description Box */}
-            <div className="mt-6 bg-gray-50 border border-gray-200 p-4 ">
-              {/* ACCENT COLOR: NASA_BLUE */}
-              <h3
-                className="text-sm font-semibold uppercase mb-2"
-                style={{ color: NASA_BLUE }}
-              >
-                Study Summary
-              </h3>
-              <p className="text-sm sm:text-base text-gray-800 leading-relaxed">
-                {description}
-              </p>
-            </div>
-          </div>
-        </header>
-
-        {/* --- 2. Metadata Details Block --- */}
-        <section className="mb-10">
+      {/* --- RIGHT MAIN CONTENT (Scrollable Details) --- */}
+      <main className="flex-1 p-4 sm:p-8 space-y-10 lg:pl-12">
+        
+        {/* --- 1. Metadata Details Block --- */}
+        <section>
           <MetadataList
             metadata={coreMetadata}
             excludeKeys={excludeFromBlock}
           />
         </section>
 
-        {/* --- 3. Files Grid Section --- */}
+        {/* --- 2. Files Grid Section --- */}
         <section>
           <FilesGrid files={files} />
         </section>
-      </div>
+        
+        {/* 💡 CSS Change: Footer spacing div (optional, but ensures text contrast) */}
+        <div className="h-10 dark:bg-gray-900"></div> 
+      </main>
     </div>
   );
 };
