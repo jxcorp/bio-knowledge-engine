@@ -99,7 +99,7 @@ const DetailsSidebar = ({ osdrId, datasetTitle, authors, description }) => (
           &bull; Associated Files
         </a>
         <Link
-          to="/"
+          to="/engine"
           // 💡 CSS Change: "Back" link colors
           className="mt-4 inline-block text-sm font-bold hover:underline
                      text-indigo-600 dark:text-cyan-400"
