@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 // Define the theme color as a constant
 const NASA_BLUE = '#0B3D91';
@@ -106,8 +107,8 @@ const FilesGrid = ({ files }) => {
 };
 
 /* --- Main Page Component --- */
-const OSDRDetailsPage = ({ initialDatasetId = 'OSD-1' }) => {
-  const osdrId = initialDatasetId;
+const OSDRDetailsPage = () => {
+    const { osdrId } = useParams(); 
 
   const [metadata, setMetadata] = useState(null);
   const [files, setFiles] = useState([]);
