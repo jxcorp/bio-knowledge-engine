@@ -67,7 +67,7 @@ const getAllDatasets = async (req, res) => {
           id: dataset.id,
           title: title,
         
-          authors: authorsList,
+          authors: authorsList||[],
           startdate: startDate,
           enddate: endDate,
           documentLink: documentLink,

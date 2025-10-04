@@ -7,13 +7,15 @@ import SpaceBiologyEngine from "./pages/Dashboard"; // Your existing component (
 import OSDRDetailsPage from "./pages/Details";
 import NoSidebarLayout from "./layouts/NoSidebarLayout"; // The new layout component
 import NotFoundPage from "./pages/404";
+import LandingPage from "./pages/LandingPage.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Dashboard Route (Uses your existing component, which has the sidebar) */}
-        <Route path="/" element={<SpaceBiologyEngine />} />
+        <Route path="/engine" element={<SpaceBiologyEngine />} />
+        <Route path="/" element={<LandingPage />} />
 
         {/* OSDR Details Route (Uses the new layout which has NO sidebar) */}
         <Route

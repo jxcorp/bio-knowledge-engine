@@ -1,65 +1,72 @@
-// src/components/Header.jsx
-import React from "react";
-import { Link } from 'react-router-dom';
-const NASA_BLUE = "#0B3D91";
+// src/components/Header.js
+import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { useTheme } from '../contexts/Themecontext';
+
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useTheme(); 
+  const icon = theme === 'dark' ? '☀️' : '🌑'; 
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 ml-4 rounded-full text-xl transition-all duration-300 ease-in-out
+                 bg-white/70 text-gray-800 hover:bg-gray-100 shadow 
+                 dark:bg-gray-800/70 dark:text-cyan-400 dark:hover:bg-gray-700 
+                 dark:shadow-lg dark:shadow-cyan-900/50 backdrop-blur-md"
+      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+    >
+      {icon}
+    </button>
+  );
+};
 
 const Header = () => {
   return (
-    // The header is a full-width bar with a strong background color
-    <header style={{ backgroundColor: NASA_BLUE }} className="shadow-lg">
-      {/* Content is centered and padded, matching the main content area width */}
-      <div className="container mx-auto max-w-7xl px-4 py-3 flex justify-between items-center">
-        {/* LEFT SIDE: Title/Logo Area */}
-        <Link
-          to="/"
-          // Add any necessary styling to the Link component itself
-          // We add flex items-center here for structure, but it's redundant if the content already has it.
-          className="flex items-center hover:opacity-80 transition duration-150"
+    <header className="sticky top-0 z-40 transition-all duration-500 backdrop-blur-md
+                       bg-white/80 border-b border-gray-200 
+                       dark:bg-gray-950/80 dark:border-gray-800 shadow-sm">
+      
+      <div className="container mx-auto max-w-7xl px-6 py-4 flex justify-between items-center">
+        
+        {/* === Brand === */}
+        <Link 
+          to="/" 
+          className="text-2xl font-extrabold tracking-tight transition duration-300
+                     text-gray-900 hover:text-indigo-600 
+                     dark:text-white dark:hover:text-cyan-400"
         >
-          <span className="text-white text-3xl font-extrabold tracking-tight">
-            SPACE BIO
+          SpaceBio 
+          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent ml-1">
+            Engine
           </span>
-          <span className="text-white text-3xl font-light ml-1">ENGINE</span>
-          <p className="hidden md:block ml-4 pl-4 border-l border-white/50 text-white/90 text-sm italic">
-            NASA Research Repository
-          </p>
         </Link>
+        
+        {/* === Navigation === */}
+        <nav className="flex items-center gap-6 text-lg font-medium">
+          <NavLink 
+            to="/about" 
+            className={({ isActive }) =>
+              `relative transition-colors duration-300 hover:text-indigo-600 dark:hover:text-cyan-400
+               ${isActive ? "text-indigo-600 dark:text-cyan-400" : "text-gray-700 dark:text-gray-300"}`
+            }
+          >
+            About
+          </NavLink>
+          <NavLink 
+            to="/engine" 
+            className={({ isActive }) =>
+              `relative transition-colors duration-300 hover:text-indigo-600 dark:hover:text-cyan-400
+               ${isActive ? "text-indigo-600 dark:text-cyan-400" : "text-gray-700 dark:text-gray-300"}`
+            }
+          >
+            Engine
+          </NavLink>
+          
 
-        {/* RIGHT SIDE: Navigation/Utility Links */}
-        <nav className="hidden md:flex space-x-6">
-          <a
-            href="#"
-            className="text-white hover:text-gray-300 transition duration-150 font-medium text-sm"
-          >
-            About This Project
-          </a>
-          <a
-            href="https://data.nasa.gov/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-gray-300 transition duration-150 font-medium text-sm"
-          >
-            NASA Data Portals
-          </a>
+          {/* Theme Toggle */}
+          <ThemeToggle />
         </nav>
-
-        {/* Optional: Simple Menu Icon for Mobile (Hidden on MD and up) */}
-        <button className="md:hidden text-white p-2 focus:outline-none">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16m-7 6h7"
-            />
-          </svg>
-        </button>
       </div>
     </header>
   );
