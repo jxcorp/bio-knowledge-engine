@@ -71,7 +71,7 @@ const ResultsList = ({
           src="/loader.gif" 
           alt="Loading content..." 
           // Adjust w- and h- values to control the size of the GIF
-          className="w-20 h-20" 
+          className="w-30 h-30" 
         />
       </div>
     );
