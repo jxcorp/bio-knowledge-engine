@@ -9,7 +9,7 @@ const PORT = 5000;
 // Config
 // Config
 const allowedOrigins = [
-  'https://jxcorp.github.io',
+  'https://space-biology.web.app',
   'http://localhost:5173',
  
 ];

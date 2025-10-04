@@ -10,7 +10,7 @@ import NotFoundPage from "./pages/404";
 
 function App() {
   return (
-    <Router basename="/bio-knowledge-engine">
+    <Router>
       <Routes>
         {/* Dashboard Route (Uses your existing component, which has the sidebar) */}
         <Route path="/" element={<SpaceBiologyEngine />} />
