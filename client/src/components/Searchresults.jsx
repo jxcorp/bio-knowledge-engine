@@ -56,9 +56,13 @@ const ResultsList = ({
   // --- MAIN RENDER LOGIC ---
   if (isLoading) {
     return (
-      <div className="text-center p-8 text-gray-500">
-        <div className="animate-spin inline-block w-6 h-6 border-3 border-t-3 border-blue-500 border-gray-200 rounded-full mb-2"></div>
-        <p className="text-sm">Loading results...</p>
+      <div className="text-center p-12 flex justify-center items-center h-full">
+        <img 
+          src="/loader.gif" 
+          alt="Loading content..." 
+          // Adjust w- and h- values to control the size of the GIF
+          className="w-20 h-20" 
+        />
       </div>
     );
   }
@@ -73,15 +77,16 @@ const ResultsList = ({
       <div className="flex justify-between items-center mb-5 pb-2 border-b border-gray-100">
         <h2 className="text-lg font-semibold text-gray-700">
           {resultHeader}{" "}
+          
           <span className="text-gray-500 font-normal">
             ({totalResults.toLocaleString()} found)
           </span>
         </h2>
-        <select className="p-1.5 border border-gray-300 rounded text-sm text-gray-600">
+        {/* <select className="p-1.5 border border-gray-300 rounded text-sm text-gray-600">
           <option>Sort by: Relevance</option>
           <option>Sort by: Date (Newest)</option>
           <option>Sort by: Date (Oldest)</option>
-        </select>
+        </select> */}
       </div>
 
       {/* LIST OF CARDS */}
