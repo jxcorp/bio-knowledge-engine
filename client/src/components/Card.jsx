@@ -64,7 +64,7 @@ const PaperCard = ({ paper }) => {
             {/* View Document Link (Simple text link) */}
             <div className="mt-2 text-left">
                 {paper.sourceType =="OSDR"? <a 
-                    href={`osdr/${paper.id}`} 
+                    href={`/osdr/${paper.id}`} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition duration-150 underline-offset-2 hover:underline"
