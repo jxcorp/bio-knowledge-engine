@@ -1,27 +1,59 @@
 // src/components/PaperCard.js (Clean, Minimalist Design)
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const PaperCard = ({ paper }) => {
-  // Fallback logic for authors and publication date
-  const authorList = paper.publication_authors || paper.authors || [];
-  const publicationDate = paper.publicationDate || "Date N/A";
+// Define the maximum number of characters to display before truncation
+const MAX_TITLE_LENGTH = 80; // Using 100 characters for a good balance
 
+const PaperCard = ({ paper }) => {
+  // Declare hooks at the top
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Fallback logic for authors and publication date
+  const authorList = paper.publication_authors || paper.authors || []; 
+  const publicationDate = paper.publicationDate || "";
+
+  // Logic to show max 2 authors and add 'et al.'
   const authorsSnippet =
     authorList.length > 0
-      ? authorList.slice(0, 3).join(", ") +
-        (authorList.length > 3 ? " et al." : "")
+      ? authorList.slice(0, 2).join(", ") + 
+        (authorList.length > 2 ? " et al." : "") 
       : "Authors N/A";
+      
+  // Determine if the title is long enough to require truncation
+  // Note: We use a custom limit (100) now, not the one previously defined (50)
+  const needsTruncation = paper.title.length > MAX_TITLE_LENGTH;
+
+  // --- JS TRUNCATION LOGIC ---
+  const displayTitle = 
+    needsTruncation && !isExpanded
+      ? paper.title.substring(0, MAX_TITLE_LENGTH) + '...' 
+      : paper.title; 
+  // ---------------------------
+
 
   return (
     // Minimalist Container: Clean white background, subtle border, gentle hover lift
     <div className="bg-white p-5 border border-gray-200 rounded-lg transition duration-200 hover:shadow-md group">
-      {/* Title Block */}
-      {/* Title: Medium size, bold, direct color */}
-      <h3 className="text-xl font-bold text-blue-700 group-hover:text-blue-600 transition duration-150 mb-1">
-        {paper.title}
+      
+      {/* Title Block - Uses JS truncated title, NO line-clamp classes */}
+      <h3
+        className="text-xl font-bold text-blue-700 group-hover:text-blue-600 transition duration-150 mb-1"
+      >
+        {displayTitle}
       </h3>
+      
+      {/* Toggle Button for Read More/Less */}
+      {needsTruncation && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-xs font-semibold text-blue-500 hover:text-blue-700 mt-1 mb-2 focus:outline-none"
+        >
+          {isExpanded ? "Read Less" : "Read More"}
+        </button>
+      )}
+
 
       {/* Metadata Bar (Simple text hierarchy) */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-3">
@@ -31,11 +63,13 @@ const PaperCard = ({ paper }) => {
           {authorsSnippet}
         </p>
 
-        {/* Date */}
-        <p className="text-gray-500">
-          <span className="mx-1">•</span>
-          {publicationDate}
-        </p>
+        {/* Date - Only render if publicationDate exists to avoid orphaned separator */}
+        {publicationDate && (
+            <p className="text-gray-500">
+                <span className="mx-1">•</span> 
+                {publicationDate}
+            </p>
+        )}
       </div>
 
       {/* Tags (Minimalist Badges) */}
@@ -66,12 +100,12 @@ const PaperCard = ({ paper }) => {
 
       {/* View Document Link (Simple text link) */}
       <div className="mt-2 text-left">
-        {paper.sourceType == "OSDR" ? (
+        {paper.sourceType === "OSDR" ? (
           <Link
             to={`/osdr/${paper.id}`}
             className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition duration-150 underline-offset-2 hover:underline"
           >
-            View Document
+            View Dataset
           </Link>
         ) : (
           <a

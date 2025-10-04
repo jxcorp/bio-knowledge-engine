@@ -34,12 +34,11 @@ const ResultsList = ({
         shadow-sm
     "
           >
-            Load More Results ({remaining.toLocaleString()} remaining)
+            Show next 10 results
           </button>
         </div>
       );
     }
-
     // 2. DISPLAY 'ALL RESULTS' MESSAGE
     // If not showing load more, it means all results are displayed
     if (totalResults > 0) {
@@ -78,9 +77,9 @@ const ResultsList = ({
         <h2 className="text-lg font-semibold text-gray-700">
           {resultHeader}{" "}
           
-          <span className="text-gray-500 font-normal">
+         {/*  <span className="text-gray-500 font-normal">
             ({totalResults.toLocaleString()} found)
-          </span>
+          </span> */}
         </h2>
         {/* <select className="p-1.5 border border-gray-300 rounded text-sm text-gray-600">
           <option>Sort by: Relevance</option>

@@ -57,6 +57,10 @@ const SpaceBiologyEngine = () => {
         journalData = dsv.csvParse(csvText, (d, i) => {
           return {
             id: `journal-${i}`,
+            authors:[],
+            startdate:"",
+            enddate:"",
+            publicationDate:"",
             title: d.Title || "N/A Title",
             documentLink: d.Link || "#",
             sourceType: "Journal", 
@@ -75,6 +79,7 @@ const SpaceBiologyEngine = () => {
       
       // C. Merge and Store
       const mergedData = [...journalData, ...osdrData];
+      console.log(mergedData);
       setAllData(mergedData);
       setIsLoading(false);
     };
@@ -128,18 +133,14 @@ const SpaceBiologyEngine = () => {
 
     setResults(slicedResults);
 
-    // Dependencies: filteredData changes when search/filter runs. 
-    // itemsToDisplay changes when the Load More button is clicked.
+    
   }, [filteredData, itemsToDisplay]);
 
 
   const handleFilterChange = (newFilters) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
-    // Filter change triggers EFFECT 2, which calls resetDisplayState
+   
   };
-
-  // 🚀 NEW: Handler for the Load More button click
-// In src/SpaceBiologyEngine.js, replace the existing handleLoadMoreAction:
 
 const handleLoadMoreAction = useCallback(async () => {
     
@@ -160,14 +161,14 @@ const handleLoadMoreAction = useCallback(async () => {
         try {
             const newOSDRData = await fetchOSDRData(offset, limit);
             
-            // Only merge if new data was returned
+            
             if (newOSDRData.length > 0) {
                 
-                // Merge new OSDR data with existing allData
+                
                 const updatedAllData = [...allData, ...newOSDRData];
                 setAllData(updatedAllData);
-                
-                
+                console.log(allData);
+                setItemsToDisplay((prevCount) => prevCount + RESULTS_PER_PAGE);
            
             } else {
                  console.log("LOAD MORE: No new data returned from OSDR.");

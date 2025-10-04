@@ -3,18 +3,10 @@
 import React, { useState } from "react";
 
 // Define the available categories and source types
-const CATEGORIES = [
-  "Life Sciences (General)",
-  "Space Physiology",
-  "Radiation Biology",
-  "Life Support Systems",
-  "Astrobiology",
-  "Plant Biology",
-];
+
 
 const SOURCES = [
   { value: "journal", label: "Journal Articles" },
-  { value: "sti", label: "NASA STI (Reports)" },
   { value: "osdr", label: "OSDR (Raw Data)" },
 ];
 
@@ -36,7 +28,7 @@ const FilterSidebar = ({ filters, onFilterChange, onSearchSubmit }) => {
   };
 
   // Handle checkbox/category changes
-  const handleCategoryChange = (category) => {
+ /*  const handleCategoryChange = (category) => {
     const currentCategories = filters.categories;
     let newCategories;
 
@@ -49,7 +41,7 @@ const FilterSidebar = ({ filters, onFilterChange, onSearchSubmit }) => {
     }
 
     onFilterChange({ categories: newCategories });
-  };
+  }; */
 
   // Handle radio button/source changes
   const handleSourceChange = (e) => {
@@ -57,11 +49,11 @@ const FilterSidebar = ({ filters, onFilterChange, onSearchSubmit }) => {
   };
 
   // Handle year range changes (assuming simple inputs for now)
-  const handleYearChange = (e) => {
+ /*  const handleYearChange = (e) => {
     const { name, value } = e.target;
     // Use parseInt to ensure the value is a number, not a string
     onFilterChange({ [name]: parseInt(value) });
-  };
+  }; */
 
   return (
     <div className="space-y-6">
