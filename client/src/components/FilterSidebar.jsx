@@ -135,7 +135,7 @@ const FilterSidebar = ({ filters, onFilterChange, onSearchSubmit }) => {
       </div>
 
       {/* 3. Subject Categories (Checkboxes) */}
-      <div className="pb-4 border-b border-gray-200">
+      {/* <div className="pb-4 border-b border-gray-200">
         <h3 className="text-md font-semibold text-gray-800 mb-3 uppercase tracking-wider">
           Subject Categories
         </h3>
@@ -159,10 +159,10 @@ const FilterSidebar = ({ filters, onFilterChange, onSearchSubmit }) => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* 4. Publication Year Range Filter (Simple Inputs) */}
-      <div>
+      {/* <div>
         <h3 className="text-md font-semibold text-gray-800 mb-3 uppercase tracking-wider">
           Publication Year
         </h3>
@@ -204,7 +204,7 @@ const FilterSidebar = ({ filters, onFilterChange, onSearchSubmit }) => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
