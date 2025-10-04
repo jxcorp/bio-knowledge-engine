@@ -10,6 +10,7 @@ const PORT = 5000;
 // Config
 const allowedOrigins = [
   'https://space-biology.web.app',
+  'http://localhost:5173'
  
 ];
 
