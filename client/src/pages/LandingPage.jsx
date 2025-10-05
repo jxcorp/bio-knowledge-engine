@@ -148,7 +148,7 @@ const LandingPage = () => {
               isDark ? 'text-slate-300' : 'text-slate-700'
             }`}>
               Seamlessly connect curated journals with live NASA OSDR data. 
-              Accelerate your research with AI-powered insights and real-time discovery.
+              Accelerate your research with real-time discovery.
             </p>
 
             {/* *** START: New Search Bar Component *** */}
