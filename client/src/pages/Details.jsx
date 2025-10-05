@@ -6,7 +6,7 @@ const NASA_BLUE = "#0B3D91";
 const NASA_BLUE_HOVER = "#082D70"; // Slightly darker for hover effect
 
 // The base URL for the remote Bio Knowledge Engine API
-const BASE_API_URL = "http://localhost:5000";
+const BASE_API_URL = "https://bio-knowledge-engine.onrender.com";
 
 // Helper function to format keys (e.g., 'study_title' -> 'Study Title')
 const formatKey = (key) =>

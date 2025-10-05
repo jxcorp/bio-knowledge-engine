@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 // *** CHANGE 1: Import useSearchParams instead of useParams ***
 import { useSearchParams } from 'react-router-dom'; 
 
-const BACKEND_URL = 'http://localhost:5000/datasets/search'; 
+const BACKEND_URL = 'https://bio-knowledge-engine.onrender.com/datasets/search'; 
 
 
 function SearchPage() {
