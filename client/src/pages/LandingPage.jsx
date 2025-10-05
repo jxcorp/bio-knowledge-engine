@@ -1,9 +1,23 @@
+// src/pages/LandingPage.jsx
+
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Rocket, Database, Sparkles, Search, ArrowRight, Zap, Globe, Atom } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Database, Sparkles, ArrowRight, Globe, Search } from 'lucide-react'; // Import Search icon
+// *** CHANGE 1: Import useNavigate from react-router-dom ***
+import { Link, useNavigate } from 'react-router-dom'; 
+import Header from '../components/Header'; 
+import Footer from '../components/Footer'; 
+import { useTheme } from '../contexts/Themecontext'; 
 
 const LandingPage = () => {
-  const [theme, setTheme] = useState('dark');
+  // Use the theme context to get the current state
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  
+  // *** CHANGE 2: Initialize useNavigate and useState for the search input ***
+  const navigate = useNavigate();
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
+  
+  // Keep scroll state if needed for other effects (e.g., parallax, header shrink)
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -12,11 +26,14 @@ const LandingPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  // *** CHANGE 3: Define the submission handler ***
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    if (localSearchTerm.trim()) {
+      // Use navigate to redirect to the /search route with the query parameter
+      navigate(`/search?q=${encodeURIComponent(localSearchTerm.trim())}`);
+    }
   };
-
-  const isDark = theme === 'dark';
 
   const features = [
     {
@@ -39,13 +56,6 @@ const LandingPage = () => {
     }
   ];
 
-  const stats = [
-    { value: '50K+', label: 'Research Papers', icon: <Search className="w-6 h-6" /> },
-    { value: '1000+', label: 'OSDR Datasets', icon: <Database className="w-6 h-6" /> },
-    { value: '95%', label: 'Discovery Rate', icon: <Zap className="w-6 h-6" /> },
-    { value: '24/7', label: 'Live Updates', icon: <Atom className="w-6 h-6" /> }
-  ];
-
   return (
     <div className={`min-h-screen transition-all duration-700 ${
       isDark 
@@ -66,7 +76,7 @@ const LandingPage = () => {
         }`} style={{ animationDuration: '5s', animationDelay: '2s' }} />
       </div>
 
-      {/* Add custom animations */}
+      {/* Custom Animations Styles */}
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -84,38 +94,8 @@ const LandingPage = () => {
         }
       `}</style>
 
-      {/* Header */}
-      <header className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-all duration-500 ${
-        isDark 
-          ? 'bg-slate-950/80 border-slate-800/50' 
-          : 'bg-white/80 border-slate-200/50'
-      }`}>
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-xl ${isDark ? 'bg-gradient-to-br from-cyan-500 to-purple-600' : 'bg-gradient-to-br from-cyan-400 to-purple-500'}`}>
-                <Rocket className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold tracking-tight">Space Biology Engine</h1>
-                <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Powered by NASA OSDR</p>
-              </div>
-            </div>
-            
-            <button
-              onClick={toggleTheme}
-              className={`p-3 rounded-full transition-all duration-300 hover:scale-110 ${
-                isDark 
-                  ? 'bg-slate-800 hover:bg-slate-700 text-yellow-300' 
-                  : 'bg-slate-100 hover:bg-slate-200 text-indigo-600'
-              }`}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Header Component - No theme props needed */}
+      <Header />
 
       {/* Hero Section */}
       <section className="relative py-24 md:py-32 overflow-hidden">
@@ -171,7 +151,41 @@ const LandingPage = () => {
               Accelerate your research with AI-powered insights and real-time discovery.
             </p>
 
-            {/* CTA Buttons */}
+            {/* *** START: New Search Bar Component *** */}
+            <form onSubmit={handleSearchSubmit} className="max-w-xl mx-auto mb-12">
+              <div className={`relative flex rounded-full p-1 shadow-2xl transition-all duration-500 ${
+                isDark 
+                  ? 'bg-slate-800/80 ring-2 ring-indigo-500/30' 
+                  : 'bg-white ring-2 ring-indigo-300/50'
+              }`}>
+                <input
+                  type="text"
+                  placeholder="e.g., human health, mouse bone loss, plant growth"
+                  value={localSearchTerm}
+                  onChange={(e) => setLocalSearchTerm(e.target.value)}
+                  className={`flex-1 px-6 py-3 text-lg rounded-l-full focus:outline-none transition-colors duration-300 ${
+                    isDark 
+                      ? 'bg-transparent text-white placeholder-slate-500' 
+                      : 'bg-transparent text-slate-800 placeholder-slate-400'
+                  }`}
+                />
+                <button
+                  type="submit"
+                  aria-label="Search"
+                  className={`group w-24 flex items-center justify-center rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 ${
+                    isDark 
+                      ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white hover:from-cyan-400 hover:to-purple-500' 
+                      : 'bg-gradient-to-r from-cyan-600 to-purple-700 text-white hover:from-cyan-500 hover:to-purple-600'
+                  }`}
+                >
+                  <Search className="w-6 h-6" />
+                </button>
+              </div>
+            </form>
+            {/* *** END: New Search Bar Component *** */}
+
+
+            {/* CTA Buttons - Kept for secondary action */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link to={'/engine'}
               ><button className={`group px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl flex items-center gap-2 ${
@@ -194,34 +208,6 @@ const LandingPage = () => {
               </Link>
             </div>
 
-            {/* Floating Stats */}
-            {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 max-w-4xl mx-auto">
-              {stats.map((stat, i) => (
-                <div 
-                  key={i}
-                  className={`p-6 rounded-2xl backdrop-blur-md border transition-all duration-300 hover:scale-105 ${
-                    isDark 
-                      ? 'bg-slate-900/50 border-slate-800/50' 
-                      : 'bg-white/60 border-slate-200/50'
-                  }`}
-                  style={{ animationDelay: `${i * 100}ms` }}
-                >
-                  <div className={`inline-flex p-2 rounded-lg mb-3 ${
-                    isDark ? 'bg-cyan-500/20 text-cyan-400' : 'bg-cyan-100 text-cyan-700'
-                  }`}>
-                    {stat.icon}
-                  </div>
-                  <div className={`text-3xl font-black mb-1 ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}>
-                    {stat.value}
-                  </div>
-                  <div className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div> */}
           </div>
         </div>
       </section>
@@ -230,6 +216,7 @@ const LandingPage = () => {
       <section className={`py-24 border-t transition-colors duration-500 ${
         isDark ? 'border-slate-800/50' : 'border-slate-200/50'
       }`}>
+        {/* ... (rest of the features section remains the same) ... */}
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             
@@ -319,25 +306,10 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className={`border-t py-12 transition-colors duration-500 ${
-        isDark ? 'border-slate-800/50 bg-slate-950/50' : 'border-slate-200 bg-slate-50/50'
-      }`}>
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Rocket className={`w-5 h-5 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
-              <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                Space Biology Discovery Engine
-              </span>
-            </div>
-            
-            <div className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
-              © 2025 Powered by NASA Open Science Data Repository
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer Component - No theme props needed */}
+      <Footer />
     </div>
   );
 }
+
+export default LandingPage;

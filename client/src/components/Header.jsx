@@ -1,72 +1,58 @@
-// src/components/Header.js
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { useTheme } from '../contexts/Themecontext';
+// src/components/Header.jsx
 
+import React from 'react';
+import { Rocket, Sun, Moon } from 'lucide-react';
+import { Link } from 'react-router-dom';
+// NOTE: Assuming this context hook is available
+import { useTheme } from '../contexts/Themecontext'; 
+
+// Separate ThemeToggle Component
 const ThemeToggle = () => {
+  // Use the theme context
   const { theme, toggleTheme } = useTheme(); 
-  const icon = theme === 'dark' ? '☀️' : '🌑'; 
+  const isDark = theme === 'dark';
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 ml-4 rounded-full text-xl transition-all duration-300 ease-in-out
-                 bg-white/70 text-gray-800 hover:bg-gray-100 shadow 
-                 dark:bg-gray-800/70 dark:text-cyan-400 dark:hover:bg-gray-700 
-                 dark:shadow-lg dark:shadow-cyan-900/50 backdrop-blur-md"
-      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      className={`p-3 rounded-full transition-all duration-300 hover:scale-110 ml-4
+        ${isDark 
+          ? 'bg-slate-800 hover:bg-slate-700 text-yellow-300' 
+          : 'bg-slate-100 hover:bg-slate-200 text-indigo-600'
+        }`}
+      aria-label="Toggle theme"
     >
-      {icon}
+      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
     </button>
   );
 };
 
 const Header = () => {
-  return (
-    <header className="sticky top-0 z-40 transition-all duration-500 backdrop-blur-md
-                       bg-white/80 border-b border-gray-200 
-                       dark:bg-gray-950/80 dark:border-gray-800 shadow-sm">
-      
-      <div className="container mx-auto max-w-7xl px-6 py-4 flex justify-between items-center">
-        
-        {/* === Brand === */}
-        <Link 
-          to="/" 
-          className="text-2xl font-extrabold tracking-tight transition duration-300
-                     text-gray-900 hover:text-indigo-600 
-                     dark:text-white dark:hover:text-cyan-400"
-        >
-          SpaceBio 
-          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent ml-1">
-            Engine
-          </span>
-        </Link>
-        
-        {/* === Navigation === */}
-        <nav className="flex items-center gap-6 text-lg font-medium">
-          <NavLink 
-            to="/about" 
-            className={({ isActive }) =>
-              `relative transition-colors duration-300 hover:text-indigo-600 dark:hover:text-cyan-400
-               ${isActive ? "text-indigo-600 dark:text-cyan-400" : "text-gray-700 dark:text-gray-300"}`
-            }
-          >
-            About
-          </NavLink>
-          <NavLink 
-            to="/engine" 
-            className={({ isActive }) =>
-              `relative transition-colors duration-300 hover:text-indigo-600 dark:hover:text-cyan-400
-               ${isActive ? "text-indigo-600 dark:text-cyan-400" : "text-gray-700 dark:text-gray-300"}`
-            }
-          >
-            Engine
-          </NavLink>
-          
+  // Use the theme context to get the current theme state for styling
+  const { theme } = useTheme(); 
+  const isDark = theme === 'dark';
 
-          {/* Theme Toggle */}
+  return (
+    <header className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-all duration-500 ${
+      isDark 
+        ? 'bg-slate-950/80 border-slate-800/50' 
+        : 'bg-white/80 border-slate-200/50'
+    }`}>
+      <div className="container mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-xl ${isDark ? 'bg-gradient-to-br from-cyan-500 to-purple-600' : 'bg-gradient-to-br from-cyan-400 to-purple-500'}`}>
+              <Rocket className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">Space Biology </h1>
+              <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Powered by NASA Open Science Data Repository</p>
+            </div>
+          </div>
+          
+          {/* Theme Toggle Component */}
           <ThemeToggle />
-        </nav>
+        </div>
       </div>
     </header>
   );

@@ -10,12 +10,19 @@ import { fetchOSDRData } from "../components/osdrdata"; // Import OSDR fetcher
 // 1. Import all static data sources
 import journalDataCSV from "../data/journals.csv";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "../contexts/Themecontext";
+import { Search } from "lucide-react";
 
 const RESULTS_PER_PAGE = 10; // Define increment constant
 
 const SpaceBiologyEngine = () => {
-  const [allData, setAllData] = useState([]);
+  const { theme } = useTheme();
+const isDark = theme === "dark";
 
+  const [allData, setAllData] = useState([]);
+  const navigate = useNavigate();
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
   const [results, setResults] = useState([]);
@@ -23,7 +30,13 @@ const SpaceBiologyEngine = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [itemsToDisplay, setItemsToDisplay] = useState(RESULTS_PER_PAGE);
-
+  const handleMainSearchSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    if (localSearchTerm.trim()) {
+      // Use navigate to redirect to the /search route with the query parameter
+      navigate(`/search?q=${encodeURIComponent(localSearchTerm.trim())}`);
+    }
+  };
   const [filters, setFilters] = useState({
     categories: [],
     yearStart: 2000,
@@ -203,8 +216,44 @@ const SpaceBiologyEngine = () => {
     >
       {/* 💡 JS Fix: Removed redundant setSearchTerm prop, assuming Header now uses context/its own state */}
       <Header />{" "}
+      <form
+            onSubmit={handleMainSearchSubmit}
+            className="max-w-xl mx-auto m-5"
+          >
+            <div
+              className={`relative flex rounded-sm p-1 shadow-xl transition-all duration-500 ${
+                isDark
+                  ? "bg-slate-800/80 ring-2 ring-indigo-500/30"
+                  : "bg-white ring-2 ring-indigo-300/50"
+              }`}
+            >
+              <input
+                type="text"
+                placeholder="e.g., human health, mouse bone loss, plant growth"
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                className={`flex-1 px-6 py-2 text-lg rounded-l-full focus:outline-none transition-colors duration-300 ${
+                  isDark
+                    ? "bg-transparent text-white placeholder-slate-500"
+                    : "bg-transparent text-slate-800 placeholder-slate-400"
+                }`}
+              />
+              <button
+                type="submit"
+                aria-label="Search"
+                className={`group w-24 flex items-center justify-center rounded-sm font-bold text-lg transition-all duration-300 hover:scale-105 ${
+                  isDark
+                    ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white hover:from-cyan-400 hover:to-purple-500"
+                    : "bg-gradient-to-r from-cyan-600 to-purple-700 text-white hover:from-cyan-500 hover:to-purple-600"
+                }`}
+              >
+                <Search className="w-6 h-6" />
+              </button>
+            </div>
+          </form>
       <div className="container mx-auto max-w-7xl px-4 md:px-6 py-6 flex flex-col md:flex-row gap-8">
         {/* Left Column: FilterSidebar */}
+        
         <div className="w-full md:w-64">
           <div
             className="md:sticky md:top-6 p-4 rounded shadow-lg border 
@@ -227,6 +276,7 @@ const SpaceBiologyEngine = () => {
                         bg-white border-gray-200
                         dark:bg-gray-800 dark:border-gray-700 dark:shadow-xl"
         >
+          
           <ResultsList
             results={results}
             isLoading={isLoading}
