@@ -183,7 +183,7 @@ const searchOsdrData = async (req, res) => {
         assay: item["Study Assay Technology Type"] || "N/A",
         sourceUrl:
           item["Authoritative Source URL"] ||
-          `https://osdr.nasa.gov/bio/repo/study/${item.Accession}`,
+          `https://osdr.nasa.gov/bio/repo/data/studies/${item.Accession}`,
         // Pass the entire item for full detail on the frontend if needed
         rawData: item,
       };

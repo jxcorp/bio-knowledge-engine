@@ -10,9 +10,9 @@ const ResultsList = ({
   searchTerm,
 
   showLoadMore, // True if results.length < totalResults
-  onLoadMore, // The handler to increment the display count
+  onLoadMore, 
 
-  // REMOVED: isOSDRMode (Now Load More is used for ALL sources)
+  
 }) => {
   const renderControls = () => {
     if (totalResults === 0 || isLoading) return null;
